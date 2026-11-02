@@ -34,7 +34,7 @@
 
   var nav = document.getElementById("site-nav");
   var navToggle = document.querySelector(".nav-toggle");
-  var desktop = window.matchMedia("(min-width: 981px)");
+  var desktop = window.matchMedia("(min-width: 901px)");
   var navOpen = false;
 
   function navFocusables() {
@@ -109,6 +109,81 @@
 
     if (desktop.addEventListener) desktop.addEventListener("change", onBreakpoint);
     else if (desktop.addListener) desktop.addListener(onBreakpoint);
+  }
+
+  /* ------------------------------------------------------------------------
+     Hero carousel
+     Three photographs, one headline. Advances every seven seconds, stops
+     when the visitor takes over, and does nothing at all under reduced
+     motion preferences.
+     ---------------------------------------------------------------------- */
+
+  var hero = document.querySelector("[data-hero]");
+
+  if (hero) {
+    var slides = Array.prototype.slice.call(hero.querySelectorAll(".hero__slide"));
+    var dots = Array.prototype.slice.call(hero.querySelectorAll("[data-hero-dot]"));
+    var heroIndex = 0;
+    var heroTimer = null;
+    var heroPaused = false;
+
+    var showSlide = function (next) {
+      if (!slides.length) return;
+      heroIndex = (next + slides.length) % slides.length;
+      slides.forEach(function (slide, i) {
+        var active = i === heroIndex;
+        slide.classList.toggle("is-active", active);
+        slide.setAttribute("aria-hidden", active ? "false" : "true");
+      });
+      dots.forEach(function (dot, i) {
+        var active = i === heroIndex;
+        dot.classList.toggle("is-active", active);
+        dot.setAttribute("aria-current", active ? "true" : "false");
+      });
+    };
+
+    var stopHero = function () {
+      if (heroTimer) {
+        window.clearInterval(heroTimer);
+        heroTimer = null;
+      }
+    };
+
+    var startHero = function () {
+      stopHero();
+      if (reduceMotion || slides.length < 2) return;
+      heroTimer = window.setInterval(function () {
+        if (!heroPaused && !document.hidden) showSlide(heroIndex + 1);
+      }, 7000);
+    };
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener("click", function () {
+        showSlide(i);
+        startHero();
+      });
+    });
+
+    hero.querySelectorAll("[data-hero-move]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var step = button.getAttribute("data-hero-move") === "next" ? 1 : -1;
+        showSlide(heroIndex + step);
+        startHero();
+      });
+    });
+
+    hero.addEventListener("pointerenter", function () { heroPaused = true; });
+    hero.addEventListener("pointerleave", function () { heroPaused = false; });
+    hero.addEventListener("focusin", function () { heroPaused = true; });
+    hero.addEventListener("focusout", function () { heroPaused = false; });
+
+    showSlide(0);
+    startHero();
+
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) return;
+      heroPaused = true;
+    });
   }
 
   /* ------------------------------------------------------------------------

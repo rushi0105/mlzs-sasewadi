@@ -108,9 +108,10 @@ Nothing on the site invents fees, results, student counts, staff names, affiliat
 
 Everything lives in `assets/css/styles.css` under `:root`.
 
-- Paper `#f7f5ef`, surface `#fffdf8`, deep green `#14453a`, marigold `#e0a63c`, ink `#10261f`
-- Display: Newsreader. UI and body: Manrope. Both self-hosted, preloaded, `font-display: swap`.
-- Radius: cards 18px, panels 28px, inputs 12px, buttons pill.
+- Cream `#f5f2ea`, deep green `#12472e`, darker green `#0c2c1f`, mint `#009d65`, ember `#d98a2b`, ink `#11231b`
+- Display: Newsreader, with italic phrases for emphasis. UI and body: Manrope. Both self-hosted, preloaded, `font-display: swap`.
+- Radial scale: 0. Every card, input, button and image is square. Depth comes from 1px hairlines (`--line`, `--line-strong`) and full-bleed photography, never from shadows.
+- Editorial layout: full-bleed image heroes, 90px-scale display type, hairline-divided grids instead of floating cards.
 - One accent, one theme, no dark mode.
 - Motion is limited to a short reveal, a header hairline and hover transitions. `prefers-reduced-motion` disables all of it.
 - The hero title uses `text-wrap: balance`; body copy is capped at readable measures.
@@ -135,11 +136,32 @@ Everything lives in `assets/css/styles.css` under `:root`.
 
 ## Deploying
 
-Any static host works:
+**Live site:** https://themountliterazeeschool.netlify.app
 
-- **Netlify:** drag the `mlzs-sasewadi` folder onto the dashboard, or connect the repository with no build command and publish directory `.`.
+Hosted on Netlify as a dropped static site. There is no build step, so the publish
+directory is the repository root and every file is uploaded as-is.
+
+**Redeploying:**
+
+- **Netlify:** open the project, go to *Dropped files*, and drag the `mlzs-deploy`
+  folder (or a zip of it) onto the drop area. Do not drop files onto the agent chat
+  box; that only attaches them to a conversation.
 - **GitHub Pages:** push the folder to a repository and enable Pages on the main branch.
+
+**Packaging note:** build the zip with forward-slash paths. Windows'
+`Compress-Archive` in PowerShell 5.1 writes backslashes, which Netlify stores as
+literal filenames (`assets\css\styles.css`), so every asset 404s and the site renders
+unstyled. Use Python's `zipfile`, 7-Zip, or drag the folder itself instead.
+
+**Free-plan badge:** the Netlify account is on the free tier, so Netlify injects a
+"Powered by Netlify" badge into the page. The HUD script states the badge cannot be
+hidden or dismissed on the free tier. Hiding it needs a paid plan, or host the same
+folder somewhere without a badge (GitHub Pages, Cloudflare Pages).
+
+Other static hosts:
+
 - **Vercel:** import the folder as a static project. No framework preset.
+- **Cloudflare Pages:** upload the folder, no build command.
 
 After deployment:
 
